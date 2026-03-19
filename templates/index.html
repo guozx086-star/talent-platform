@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人才管理平台 - 首页</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-users"></i>
+                <span>人才管理平台</span>
+            </div>
+            <div class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-link active">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <a href="{{ url_for('candidates') }}" class="nav-link">
+                    <i class="fas fa-user-tie"></i> 候选人
+                </a>
+                <a href="{{ url_for('jobs') }}" class="nav-link">
+                    <i class="fas fa-briefcase"></i> 职位
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i> 报表
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i> 设置
+                </a>
+            </div>
+            <div class="nav-user">
+                <span class="user-name">管理员</span>
+                <i class="fas fa-user-circle user-avatar"></i>
+            </div>
+        </nav>
+
+        <!-- 仪表板 -->
+        <main class="dashboard">
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.total_candidates }}</h3>
+                        <p>总候选人</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.hired_count }}</h3>
+                        <p>已录用</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.interview_count }}</h3>
+                        <p>面试中</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.avg_match_score }}%</h3>
+                        <p>平均匹配度</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-danger">
+                    <div class="stat-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.open_positions }}</h3>
+                        <p>开放职位</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要内容区域 -->
+            <div class="content-grid">
+                <!-- 最近候选人 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-tie"></i> 最近候选人</h3>
+                        <a href="{{ url_for('candidates') }}" class="btn-link">查看全部</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>姓名</th>
+                                        <th>目标岗位</th>
+                                        <th>工作经验</th>
+                                        <th>匹配度</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for candidate in candidates %}
+                                    <tr>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="user-avatar-small">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <strong>{{ candidate.name }}</strong>
+                                                    <br>
+                                                    <small>{{ candidate.education }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ candidate.position }}</td>
+                                        <td>{{ candidate.experience }}</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: {{ candidate.match_score }}%">
+                                                    {{ candidate.match_score }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-{{ candidate.status }}">
+                                                {{ candidate.status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('candidate_detail', candidate_id=candidate.id) }}" 
+                                               class="btn-action">
+                                                <i class="fas fa-eye"></i> 查看
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bolt"></i> 快速操作</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-actions">
+                            <button class="quick-btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                <span>添加候选人</span>
+                            </button>
+                            <button class="quick-btn btn-success">
+                                <i class="fas fa-file-export"></i>
+                                <span>导出报表</span>
+                            </button>
+                            <button class="quick-btn btn-info">
+                                <i class="fas fa-search"></i>
+                                <span>搜索候选人</span>
+                            </button>
+                            <button class="quick-btn btn-warning">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>安排面试</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 系统信息 -->
+                        <div class="system-info">
+                            <h4><i class="fas fa-info-circle"></i> 系统信息</h4>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> 系统运行正常</li>
+                                <li><i class="fas fa-database"></i> 数据库连接正常</li>
+                                <li><i class="fas fa-shield-alt"></i> 安全防护已启用</li>
+                                <li><i class="fas fa-sync-alt"></i> 数据已同步</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表区域 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-pie"></i> 人才分布分析</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-placeholder">
+                        <div class="chart-info">
+                            <h4>候选人技能分布</h4>
+                            <p>基于当前候选人数据统计</p>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="chart-stat">
+                                <div class="stat-value">45%</div>
+                                <div class="stat-label">技术岗位</div>
+                            </div>
+                            <div class="chart-stat">
+                                <div class="stat-value">25%</div>
+                                <div class="stat-label">产品设计</div>
+                            </div>
+                            <div class="chart-stat">
+                                <div class="stat-value">20%</div>
+                                <div class="stat-label">市场运营</div>
+                            </div>
+                            <div class="chart-stat">
+                                <div class="stat-value">10%</div>
+                                <div class="stat-label">管理职能</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>人才管理平台</h4>
+                    <p>智能简历匹配与候选人管理系统</p>
+                </div>
+                <div class="footer-section">
+                    <p>© 2026 人才管理平台 v2.0.0</p>
+                    <p>部署时间: 2026-03-19 19:08</p>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-status">
+                        <span class="status-dot online"></span>
+                        <span>系统在线</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
